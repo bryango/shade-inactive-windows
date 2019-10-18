@@ -8,8 +8,7 @@ const Clutter = imports.gi.Clutter;
 const Gio = imports.gi.Gio;
 const ExtensionUtils = imports.misc.extensionUtils;
 
-const SHADE_BRIGHTNESS = -0.9;
-const SHADE_DESATURATION = 0.9;
+const GSCHEMA_ID = "org.gnome.shell.extensions.shade-inactive-windows";
 
 let on_window_created;
 
@@ -30,8 +29,12 @@ const WindowShader = new Lang.Class({
 
     set shadeLevel(level) {
         this._shadeLevel = level;
-        this._brightness_effect.set_brightness(level * SHADE_BRIGHTNESS);
-        this._desat_effect.set_factor(level * SHADE_DESATURATION);
+        this._brightness_effect.set_brightness(
+            level * ShadeInactiveWindowsSettings.get_double('shade-brightness')
+        );
+        this._desat_effect.set_factor(
+            level * ShadeInactiveWindowsSettings.get_double('shade-desaturation')
+        );
         this._brightness_effect.enabled = (this._shadeLevel > 0);
         this._desat_effect.enabled = (this._shadeLevel > 0);
     },
@@ -50,7 +53,7 @@ function init() {
         schemaSource = Gio.SettingsSchemaSource.new_from_directory(schemaDir.get_path(), schemaSource, false);
     }
 
-    var schemaObj = schemaSource.lookup('fi.iki.hepaajan.shade-inactive-windows.preferences', true);
+    var schemaObj = schemaSource.lookup(GSCHEMA_ID, true);
     if(!schemaObj) {
         throw new Error('failure to look up schema');
     }
