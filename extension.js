@@ -63,13 +63,26 @@ function init() {
 function enable() {
 
     function use_shader(meta_win) {
-	if (!meta_win) {
-	    return false;
-	}
-	var type = meta_win.get_window_type()
-	return (type == Meta.WindowType.NORMAL ||
-		type == Meta.WindowType.DIALOG ||
-		type == Meta.WindowType.MODAL_DIALOG);
+        if (!meta_win) {
+            return false;
+        }
+
+        var blacklist = ShadeInactiveWindowsSettings.get_strv('exclude-apps');
+        var title = meta_win.get_title().toLowerCase()
+        var wmclass = meta_win.get_wm_class().toLowerCase()
+        var type = meta_win.get_window_type()
+
+        for (var i = 0; i < blacklist.length; i++) {
+            var name = blacklist[i].toLowerCase();
+            if (title.indexOf(name) != -1 || wmclass.indexOf(name) != -1) {
+                // app in blacklist, return and do nothing
+                return false;
+            }
+        }
+
+        return (type == Meta.WindowType.NORMAL ||
+            type == Meta.WindowType.DIALOG ||
+            type == Meta.WindowType.MODAL_DIALOG);
     }
 
     function verifyShader(wa) {

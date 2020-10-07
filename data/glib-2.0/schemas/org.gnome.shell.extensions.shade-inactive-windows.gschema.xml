@@ -27,5 +27,12 @@
         Relative desaturation of the shade, from 0 to +1.
       </description>
     </key>
+    <key type="as" name="exclude-apps">
+      <default>[]</default>
+      <summary>Apps that are excluded from shading</summary>
+      <description>
+        Names of apps that are excluded from shading, case insensitive.
+      </description>
+    </key>
   </schema>
 </schemalist>
